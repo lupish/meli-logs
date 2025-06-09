@@ -50,14 +50,23 @@ def get_top_users(df_logs: pd.DataFrame) -> pd.DataFrame:
     top_5 = unique_actions.sort_values(ascending=False).head(5)
     return top_5.reset_index(name='unique_action_count')
 
+def save_anomalies(df_anomalies: pd.DataFrame):
+    df_anomalies = anomalies_users.reset_index()
+    df_anomalies.columns = ['user_id', 'anomalies']
+    df_anomalies['anomalies'] = df_anomalies['anomalies'].apply(lambda x: ', '.join(x))
+    df_anomalies.to_csv('data/anomalies_users.csv', index=False)
+
 if __name__ == "__main__":
     print("***************************** BEGIN *****************************")
     df_logs = get_app_logs()
     df_logs_cleaned = clean_app_logs(df_logs)
 
     anomalies_users = get_anomalies(df_logs_cleaned)
+    pd.set_option('display.max_colwidth', None)
+    save_anomalies(anomalies_users)
+    print(anomalies_users)
+
     df_logs_valid_users = df_logs_cleaned[~df_logs_cleaned['user_id'].isin(anomalies_users)]
-    print(df_logs_valid_users)
 
     df_top_users = get_top_users(df_logs_valid_users)
     print(df_top_users)
