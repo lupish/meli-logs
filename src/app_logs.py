@@ -69,6 +69,8 @@ if __name__ == "__main__":
     df_logs_valid_users = df_logs_cleaned[~df_logs_cleaned['user_id'].isin(anomalies_users)]
 
     df_top_users = get_top_users(df_logs_valid_users)
+    df_top_users.to_csv('data/df_top_users.csv', index=False)
+
     print(df_top_users)
 
     print("****************************** END ******************************")
